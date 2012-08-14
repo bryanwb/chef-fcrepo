@@ -1,8 +1,8 @@
 metadata
-cookbook 'tomcat', git: 'git://github.com/bryanwb/chef-tomcat.git'
-cookbook 'maven'
+cookbook 'maven', path: "../maven"
 cookbook 'ark'
 cookbook 'sudo'
+cookbook 'yumrepo'
 
 group :dev do
   cookbook "minitest-handler", git: "git://github.com/btm/minitest-handler-cookbook.git"

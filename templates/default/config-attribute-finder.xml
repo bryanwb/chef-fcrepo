@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:util="http://www.springframework.org/schema/util"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+    <bean id="FedoraRIAttributeFinder" class="org.fcrepo.server.security.xacml.pdp.finder.attribute.FedoraRIAttributeFinder">
+        <constructor-arg ref="org.fcrepo.server.security.xacml.util.RelationshipResolver" />
+        <!--  the resolver tag appears to be a dead configuration -->
+        <!-- <resolver url="http://localhost:5743/fedora/melcoerisearch" username="" password="" /> -->
+
+        <!-- attributes using simple object and datastream relationships, xacml attribute is the same as the relationship -->
+        <property name="resourceAttributes">
+            <map>
+                <!-- object and datastream properties -->
+                <entry key="info:fedora/fedora-system:def/view#mimeType">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute" />
+                </entry>
+                <entry key="info:fedora/fedora-system:def/model#ownerId">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute" />
+                </entry>
+                <entry key="info:fedora/fedora-system:def/model#state">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute" />
+                </entry>
+                <entry key="info:fedora/fedora-system:def/model#createdDate">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute" />
+                </entry>
+                <entry key="info:fedora/fedora-system:def/model#label">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute" />
+                </entry>
+                <entry key="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute" />
+                </entry>   
+                <entry key="http://purl.org/dc/elements/1.1/subject">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <!-- specify either "object" to retrieve attributes for the object as a whole (irrespective of datastream etc being accessed)
+      or specify "resource" to retrieve attributes based on the full URI of the resource.  Default is "resource" -->
+                                <entry key="target" value="object"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!-- example attributes using simple object and datastream relationships with a specified xacml attribute id -->
+                <entry key="http://www.example.org/fedora/xacml/attributes/resource#rel-subject">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="relationship" value="http://purl.org/dc/elements/1.1/subject"/>
+                                <entry key="target" value="object"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="http://www.example.org/fedora/xacml/attributes/resource#rel-state">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="relationship" value="info:fedora/fedora-system:def/model#state"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!-- example TQL query-based attributes -->
+                <entry key="http://www.example.org/fedora/xacml/attributes/resource#itql-subject">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="itql"/>
+                                <entry key="object" value="##resource##"/>
+                                <entry key="value" value="output"/>
+                                <entry key="query" value="select $output from &lt;#ri&gt; where &lt;##resource##&gt; &lt;http://purl.org/dc/elements/1.1/subject&gt; $output"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+
+                <entry key="http://www.example.org/fedora/xacml/attributes/resource#itql-state">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="itql"/>
+                                <entry key="resource" value="##resource##"/>
+                                <entry key="value" value="output"/>
+                                <entry key="query" value="select $output from &lt;#ri&gt; where &lt;##resource##&gt; &lt;info:fedora/fedora-system:def/model#state&gt; $output"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+
+
+                <!-- UN FAO Access Control RI Attribute definitions -->          
+
+                <!-- expose the access level property of collections on object that belongs to collections  -->
+                <!-- should apply to the object itself and sub-resources; so the query is based on passing in the object -->
+                <entry key="http://www.fao.org/fedora/policies/xacml#collectionAccess">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="itql"/>
+                                <entry key="object" value="##resource##"/>
+                                <entry key="value" value="output"/>
+                                <entry key="query" value="select $output from &lt;#ri&gt; where &lt;##resource##&gt; &lt;info:fedora/fedora-system:def/relations-external#isMemberOf&gt; $collection and $collection &lt;http://www.fao.org/fedora/policies#collectionAccess&gt; $output"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+
+                <!--  expose the type (CModel(s)) of the parent of this object -->
+                <!--  parent means any object expressing a relationship TO this object -->
+                <!--  used for denying purge when there is a dependent object -->
+                <entry key="http://www.fao.org/fedora/policies/xacml#parentType">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="itql"/>
+                                <entry key="object" value="##resource##"/> <!-- objects and their components -->
+                                <entry key="value" value="output"/>
+                                <entry key="query" value="
+                                    select $output 
+                                    from &lt;#ri&gt; 
+                                    where $parent $rel &lt;##resource##&gt; 
+                                    and 
+                                    $parent &lt;info:fedora/fedora-system:def/model#hasModel&gt; 
+                                    $output"
+                                        />
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+
+                <!-- selfOrAncestorPrivate
+    		gives a list of objects, looking up the WEMI hierarchy (and including the object being accessed; ie "self")
+    		which are implicitly private.
+
+    		private means that they are
+    		- not a member of a collection
+    		- are a member of a collection with no access control attributes
+    		- are a member of a collection with a private access control attribute
+    		- are a member of a collection with a private access control attribute and also member(s) of collections with public access control attributes
+    		  (private overrides public)
+    		  
+			Policies using this attribute should deny access if the resulting set (bag) is not empty
+			(having the attribute collect all private members in the hierarchy means that FeSL debug logging can be used 
+			to determine which member in the hierarchy is preventing access)
+
+			the structure of the query is essentially
+			(A) collect in $obj all members of the hierarchy (including self) looking upwards from I->M->E->W
+			(B) collect in $obj all objects that are members of public collection(s); but only where they are also not in a private collection
+			(C) do a graph minus, ie (A)-(B) will give all implicitly private members of the hierarchy (including self) looking upwards
+			
+			The annotated query is (remove ## comments; TQL does not have comments in its syntax)
+			(test:item1 is used as the example being accessed here; this is ##resource## in the "live" version)
+			
+			select $obj
+			from <#ri>
+			where
+			(
+			 ## Part A - all objects including self in the hierarchy, looking upwards
+			 ## (some entailment would simplify this a lot, perhaps using Mulgara's trans/walk capabilities; but we can't do that)
+			 (
+			  ## union of...
+			  
+			  ## self
+			  (
+			   $obj <mulgara:is> <info:fedora/test:item1>
+			  )
+			  or
+			  ## parent
+			  (
+			   <info:fedora/test:item1> $r1 $obj
+			  )
+			  or
+			  ## parent-of-parent
+			  (
+			   <info:fedora/test:item1> $r2 $p1
+			   and
+			   $p1 $r3 $obj
+			  )
+			  or
+			  ## parent-of-parent-of-parent
+			  ## explicit relationships rather than variables, as this can only ever match against a full I->M->E->W lookup
+			  (
+			   <info:fedora/test:item1> <http://purl.org/vocab/frbr/core#exemplarOf> $p2
+			   and
+			   $p2 <http://purl.org/vocab/frbr/core#embodimentOf> $p3
+			   and
+			   $p3 <http://purl.org/vocab/frbr/core#realizationOf> $obj
+			  )
+			 )
+			 and
+			 ## r1 can be used in I->M, M->E, E->W
+			 (
+			  $r1 <mulgara:is> <http://purl.org/vocab/frbr/core#exemplarOf>
+			  or
+			  $r1 <mulgara:is> <http://purl.org/vocab/frbr/core#embodimentOf>
+			  or
+			  $r1 <mulgara:is> <http://purl.org/vocab/frbr/core#realizationOf>
+			 )
+			 and
+			 ## r2 and r3 can only be used in I->M->E and M->E->W (these are the only parent-of-parent combinatinos)
+			 (
+			  $r2 <mulgara:is> <http://purl.org/vocab/frbr/core#exemplarOf>
+			  or
+			  $r2 <mulgara:is> <http://purl.org/vocab/frbr/core#embodimentOf>
+			 )
+			 and
+			 (
+			  $r3 <mulgara:is> <http://purl.org/vocab/frbr/core#exemplarOf>
+			  or
+			  $r3 <mulgara:is> <http://purl.org/vocab/frbr/core#embodimentOf>
+			 )
+			)
+			minus
+			## Part B - all objects with explicit PUBLIC collection membership as long as they are not also in a private collection
+			(
+			 ## Public collection members
+			 (
+			  $obj <fedora-rels-ext:isMemberOf> $col1
+			  and
+			  $col1 <http://www.fao.org/fedora/policies#collectionAccess> <http://www.fao.org/fedora/policies#accessPublic>
+			 )
+			 minus
+			 ## Private collection members
+			 (
+			  $obj <fedora-rels-ext:isMemberOf> $col2
+			  and
+			  $col2 <http://www.fao.org/fedora/policies#collectionAccess> <http://www.fao.org/fedora/policies#accessPrivate>
+			 )
+			)
+	-->
+                <entry key="http://www.fao.org/fedora/policies/xacml#selfOrAncestorPrivate">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="itql"/>
+                                <!--  substitute the object URI irrespective of object's component being accessed; attribute eg applies to datastreams of object -->
+                                <entry key="object" value="##resource##"/>
+                                <entry key="value" value="obj"/>
+                                <entry key="query" value="
+                                    select $obj
+                                    from &lt;#ri&gt;
+                                    where
+                                    (
+                                    (
+                                    (
+                                    $obj &lt;mulgara:is&gt; &lt;##resource##&gt;
+                                    )
+                                    or
+                                    (
+                                    &lt;##resource##&gt; $r1 $obj
+                                    )
+                                    or
+                                    (
+                                    &lt;##resource##&gt; $r2 $p1
+                                    and
+                                    $p1 $r3 $obj
+                                    )
+                                    or
+                                    (
+                                    &lt;##resource##&gt; &lt;http://purl.org/vocab/frbr/core#exemplarOf&gt; $p2
+                                    and
+                                    $p2 &lt;http://purl.org/vocab/frbr/core#embodimentOf&gt; $p3
+                                    and
+                                    $p3 &lt;http://purl.org/vocab/frbr/core#realizationOf&gt; $obj
+                                    )
+                                    )
+                                    and
+                                    (
+                                    $r1 &lt;mulgara:is&gt; &lt;http://purl.org/vocab/frbr/core#exemplarOf&gt;
+                                    or
+                                    $r1 &lt;mulgara:is&gt; &lt;http://purl.org/vocab/frbr/core#embodimentOf&gt;
+                                    or
+                                    $r1 &lt;mulgara:is&gt; &lt;http://purl.org/vocab/frbr/core#realizationOf&gt;
+                                    )
+                                    and
+                                    (
+                                    $r2 &lt;mulgara:is&gt; &lt;http://purl.org/vocab/frbr/core#exemplarOf&gt;
+                                    or
+                                    $r2 &lt;mulgara:is&gt; &lt;http://purl.org/vocab/frbr/core#embodimentOf&gt;
+                                    )
+                                    and
+                                    (
+                                    $r3 &lt;mulgara:is&gt; &lt;http://purl.org/vocab/frbr/core#exemplarOf&gt;
+                                    or
+                                    $r3 &lt;mulgara:is&gt; &lt;http://purl.org/vocab/frbr/core#embodimentOf&gt;
+                                    )
+                                    )
+                                    minus
+                                    (
+                                    (
+                                    $obj &lt;fedora-rels-ext:isMemberOf&gt; $col1
+                                    and
+                                    $col1 &lt;http://www.fao.org/fedora/policies#collectionAccess&gt; &lt;http://www.fao.org/fedora/policies#accessPublic&gt;
+                                    )
+                                    minus
+                                    (
+                                    $obj &lt;fedora-rels-ext:isMemberOf&gt; $col2
+                                    and
+                                    $col2 &lt;http://www.fao.org/fedora/policies#collectionAccess&gt; &lt;http://www.fao.org/fedora/policies#accessPrivate&gt;
+                                    )
+                                    )"
+                                        />
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+
+                <!-- END of UN FAO Access Control RI Attribute definitions -->
+
+                <!-- example SPARQL query-based attributes -->
+                <entry key="http://www.example.org/fedora/xacml/attributes/resource#sparql-subject">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="sparql"/>
+                                <entry key="object" value="##resource##"/>
+                                <entry key="value" value="output"/>
+                                <entry key="query" value="SELECT ?output FROM &lt;#ri&gt; WHERE { &lt;##resource##&gt; &lt;http://purl.org/dc/elements/1.1/subject&gt; ?output . }"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="http://www.example.org/fedora/xacml/attributes/resource#sparql-state">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="sparql"/>
+                                <entry key="resource" value="##resource##"/>
+                                <entry key="value" value="output"/>
+                                <entry key="query" value="SELECT ?output FROM &lt;#ri&gt; WHERE { &lt;##resource##&gt; &lt;info:fedora/fedora-system:def/model#state&gt; ?output . }"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!-- example SPO query-based attributes -->
+                <entry key="http://www.example.org/fedora/xacml/attributes/resource#spo-subject">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="spo"/>
+                                <entry key="object" value="##resource##"/>
+                                <entry key="value" value="o"/> <!-- the object of the spo triple query -->
+                                <entry key="query" value="&lt;##resource##&gt; &lt;http://purl.org/dc/elements/1.1/subject&gt; *"/>
+                                <entry key="relationship" value="http://purl.org/dc/elements/1.1/subject"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="http://www.example.org/fedora/xacml/attributes/resource#spo-state">
+                    <bean class="org.fcrepo.server.security.xacml.util.Attribute">
+                        <constructor-arg>
+                            <map>
+                                <entry key="queryLang" value="spo"/>
+                                <entry key="resource" value="##resource##"/>
+                                <entry key="value" value="o"/>
+                                <entry key="query" value="&lt;##resource##&gt; &lt;info:fedora/fedora-system:def/model#state&gt; *"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <!--
+	<AttributeFinder name="org.fcrepo.server.security.xacml.pdp.finder.attribute.LDAPAttributeFinder">
+	  <map>
+		<entry key="java.naming.factory.initial" value="com.sun.jndi.ldap.LdapCtxFactory" />
+		<entry key="java.naming.provider.url" value="ldap://nish.ramp.org.au:389/" />
+		<entry key="java.naming.security.authentication" value="simple" />
+		<entry key="java.naming.referral" value="follow" />
+		<entry key="java.naming.security.principal" value="cn=admin,dc=arcs,dc=org,dc=au" />
+		<entry key="java.naming.security.credentials" value="arcs" />
+		<entry key="id-attribute" value="uid" />
+		<entry key="searchbase" value="dc=arcs,dc=org,dc=au" />
+      </map>
+	  <attribute designator="subject" name="memberOf" />
+	</AttributeFinder>
+	-->
+</beans>
