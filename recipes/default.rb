@@ -7,6 +7,9 @@
 # Apache 2.0 license
 #
 
+
+user node['fedora']['user']
+
 directory node['fedora']['home'] do
   owner node['fedora']['user']
   group node['fedora']['user']
@@ -27,8 +30,8 @@ file "/etc/profile.d/fedora.sh" do
   mode  "0755"
 end
 
-cookbook_file "/etc/init.d/fedora" do
-  source "fedora"
+template "/etc/init.d/fedora" do
+  source "init.el.erb"
   owner "root"
   group "root"
   mode "0755"
@@ -40,8 +43,8 @@ remote_file "#{Chef::Config[:file_cache_path]}/fcrepo-installer.jar" do
   mode "0775"
 end 
 
-cookbook_file "#{Chef::Config[:file_cache_path]}/install.properties" do
-  source "install.properties"
+template "#{Chef::Config[:file_cache_path]}/install.properties" do
+  source "install.properties.erb"
   owner "root"
   group "root"
   mode "0644"
@@ -71,21 +74,21 @@ end
 #   mode "0755"
 # end
 
-cookbook_file "#{node['fedora']['home']}/server/config/fedora-users.xml" do
+template "#{node['fedora']['home']}/server/config/fedora-users.xml" do
   source "fedora-users.xml.erb"
   owner node['fedora']['user']
   group node['fedora']['user']
   mode "0755"
 end
 
-directory "#{node['fedora']['home']}/tomcat/conf/Catalina/localhost/solr.xml" do
+directory "#{node['fedora']['home']}/tomcat/conf/Catalina/localhost" do
   owner node['fedora']['user']
   group node['fedora']['user']
   mode "0755"
   recursive true
 end
 
-cookbook_file "#{node['fedora']['home']}/tomcat/conf/Catalina/localhost/solr.xml" do
+template "#{node['fedora']['home']}/tomcat/conf/Catalina/localhost/solr.xml" do
   source "solr.xml.erb"
   owner node['fedora']['user']
   group node['fedora']['user']
@@ -97,5 +100,24 @@ maven "solr" do
   version "3.6.1"
   dest "#{node['fedora']['home']}/solr"
   packaging "war"
+  action :put
 end 
 
+service "fedora" do
+  action [ :enable, :start ]
+end
+
+logrotate_app node['fedora']['user'] do
+  cookbook "logrotate"
+  path     "#{node['fedora']['home']}/logs/catalina.out"
+  frequency "daily"
+  rotate    30
+  create    "664 #{node['fedora']['user']} #{node['fedora']['user']}"
+end
+
+cron "compress rotated" do
+  minute "0"
+  hour   "0"
+  command  "find  #{node['fedora']['home']}/logs -name '*.gz' -mtime +60 -exec rm -f '{}' \\; ; \
+  find #{node['fedora']['home']}/logs ! -name '*.gz' -mtime +2 -exec gzip '{}' \\;"
+end

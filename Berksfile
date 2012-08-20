@@ -1,8 +1,8 @@
 metadata
-cookbook 'maven', path: "../maven"
+cookbook 'maven', git: 'git://github.com/bryanwb/maven.git'
 cookbook 'ark'
 cookbook 'sudo'
-cookbook 'yumrepo'
+cookbook 'yumrepo', git: 'git://github.com/bryanwb/cookbook-yumrepo.git'
 
 group :dev do
   cookbook "minitest-handler", git: "git://github.com/btm/minitest-handler-cookbook.git"

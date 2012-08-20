@@ -1,0 +1,31 @@
+<?xml version='1.0' ?>
+  <users>
+    <user name="fedoraAdmin" password="fedoracms7">
+      <attribute name="fedoraRole">
+        <value>administrator</value>
+      </attribute>
+    </user>
+
+    <!-- user IDs used in testing.  NB, if running tests against an
+    external fedora instance, copy all of the below between the BEGIN and END comments
+    to the fedora-users.xml file of the external instance -->
+    
+    <!-- BEGIN -->
+    
+    <!-- generic user for testing, no access by default, tests can create policies for this specific user as needed -->
+    <user name="testUser" password="testUser">
+      <attribute name="fedoraRole">
+        <value>testGroup</value>
+      </attribute>
+    </user>
+  
+    <!-- END -->
+  
+
+    <user name="fedoraIntCallUser" password="changeme">
+      <attribute name="fedoraRole">
+        <value>fedoraInternalCall-1</value>
+        <value>fedoraInternalCall-2</value>
+      </attribute>
+    </user>
+  </users>
