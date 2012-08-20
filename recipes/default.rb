@@ -8,6 +8,8 @@
 #
 
 
+include_recipe "fcrepo::postgres"
+
 user node['fedora']['user']
 
 directory node['fedora']['home'] do
@@ -105,14 +107,6 @@ end
 
 service "fedora" do
   action [ :enable, :start ]
-end
-
-logrotate_app node['fedora']['user'] do
-  cookbook "logrotate"
-  path     "#{node['fedora']['home']}/logs/catalina.out"
-  frequency "daily"
-  rotate    30
-  create    "664 #{node['fedora']['user']} #{node['fedora']['user']}"
 end
 
 cron "compress rotated" do
