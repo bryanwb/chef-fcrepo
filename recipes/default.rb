@@ -33,9 +33,15 @@ file "/etc/profile.d/fedora.sh" do
 end
 
 template "/etc/init.d/fedora" do
-  source "init.el.erb"
+  source "fedora.init.el.erb"
   owner "root"
   group "root"
+  mode "0755"
+end
+
+directory "/var/run/fedora" do
+  owner "fedora"
+  group "fedora"
   mode "0755"
 end
 
@@ -50,6 +56,12 @@ template "#{Chef::Config[:file_cache_path]}/install.properties" do
   owner "root"
   group "root"
   mode "0644"
+end
+
+maven "postgresql" do
+  group_id "postgresql"
+  version "9.0-801.jdbc4"
+  dest Chef::Config[:file_cache_path]
 end
 
 execute "install fedora" do

@@ -33,13 +33,13 @@ apim.ssl.required=true
 keystore.file=included
 
 # database
-database=postgres
-database.driver=included
-database.mysql.driver=included
-database.jdbcDriverClass=com.mysql.jdbc.Driver
-database.mysql.jdbcDriverClass=com.mysql.jdbc.Driver
-database.jdbcURL=jdbc\:mysql\://localhost/fedora?useUnicode\=true&amp;characterEncoding\=UTF-8&amp;autoReconnect\=true
-database.mysql.jdbcURL=jdbc\:mysql\://localhost/fedora?useUnicode\=true&amp;characterEncoding\=UTF-8&amp;autoReconnect\=true
+database=postgresql
+database.driver=<%= Chef::Config[:file_cache_path] %>/postgresql-9.0-801.jdbc4.jar
+database.postgresql.driver=/var/chef/cache/postgresql-9.0-801.jdbc4.jar
+database.jdbcDriverClass=org.postgresql.Driver
+database.postgresql.jdbcDriverClass=org.postgresql.Driver
+database.jdbcURL=jdbc\:postgresql\://localhost/fedora
+database.postgresql.jdbcURL=jdbc\:postgresql\://localhost/fedora
 database.password=fedoraAdmin
 database.username=fedoraAdmin
 

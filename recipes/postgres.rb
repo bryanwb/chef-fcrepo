@@ -16,12 +16,14 @@ bash "create role" do
   psql -d postgres -c "CREATE ROLE \"fedoraAdmin\" LOGIN PASSWORD 'fedoraAdmin';"
   EOH
   user "postgres"
+  ignore_failure true
 end
 
 bash "create database" do
   code <<-EOH
-  CREATE DATABASE "fedora3" WITH ENCODING='UTF8' OWNER=\"fedoraAdmin\";"
+  psql -d postgres -c "CREATE DATABASE \"fedora3\" WITH ENCODING='UTF8' OWNER=\"fedoraAdmin\";"
   EOH
   user "postgres"
+  ignore_failure true
 end
 

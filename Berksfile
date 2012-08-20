@@ -1,4 +1,5 @@
 metadata
+cookbook 'java', git: 'git://github.com/bryanwb/java.git'
 cookbook 'maven', git: 'git://github.com/bryanwb/maven.git'
 cookbook 'ark'
 cookbook 'sudo'

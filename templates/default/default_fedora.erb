@@ -1,2 +1,9 @@
 export FEDORA_HOME=<%= node['fedora']['home'] %>
 export PATH=$PATH:<%= node['fedora']['home'] %>/client/bin
+export TOMCAT_USER=fedora
+export CATALINA_PID=/var/run/fedora/fedora.pid
+export CATALINA_HOME=$FEDORA_HOME/tomcat
+export CATALINA_TMPDIR=$FEDORA_HOME/tomcat/temp
+export CATALINA_OPTS='-Dfedora.fesl.pep_nocache=true -Xmx256M -Xms128M -XX:MaxPermSize=256M -Dfile.encoding=UTF-8 -Djavax.net.ssl.trustStore=/var/fedora/server/truststore -Djavax.net.ssl.trustStorePassword=tomcat'
+export PATH=$FEDORA_HOME/server/bin:$FEDORA_HOME/client/bin:$PATH
+
