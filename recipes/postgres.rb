@@ -4,6 +4,11 @@ include_recipe "yumrepo::postgresql9"
    package pkg
 end
 
+cookbook_file "/var/lib/pgsql/9.0/data" do
+  source "pg_hba.conf"
+  owner "postgres"
+end
+
 ruby_block "create database" do
   block do
     system('/etc/init.d/postgresql-9.0 initdb')
@@ -21,7 +26,7 @@ end
 
 bash "create database" do
   code <<-EOH
-  psql -d postgres -c "CREATE DATABASE \"fedora3\" WITH ENCODING='UTF8' OWNER=\"fedoraAdmin\";"
+  psql -d postgres -c "CREATE DATABASE \"fedora\" WITH ENCODING='UTF8' OWNER=\"fedoraAdmin\";"
   EOH
   user "postgres"
   ignore_failure true

@@ -15,7 +15,7 @@ Vagrant::Config.run do |config|
       
       dist_config.vm.box = name.to_s
       dist_config.vm.box_url = options[:url]
-      
+      dist_config.vm.customize [ "modifyvm", :id, "--memory", "1024" ]      
       dist_config.vm.provision :chef_solo do |chef|
         chef.cookbooks_path = ["/tmp/fcrepo-cookbooks"]
         chef.provisioning_path = '/etc/vagrant-chef' 

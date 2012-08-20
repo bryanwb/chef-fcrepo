@@ -9,6 +9,6 @@ version          "0.0.1"
   depends cb
 end
 
-%w{ centos redhat debian ubuntu }.each do |cb|
-  depends cb
+%w{ centos redhat debian ubuntu }.each do |os|
+  supports os
 end

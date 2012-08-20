@@ -35,7 +35,7 @@ keystore.file=included
 # database
 database=postgresql
 database.driver=<%= Chef::Config[:file_cache_path] %>/postgresql-9.0-801.jdbc4.jar
-database.postgresql.driver=/var/chef/cache/postgresql-9.0-801.jdbc4.jar
+database.postgresql.driver=<%= Chef::Config[:file_cache_path] %>/postgresql-9.0-801.jdbc4.jar
 database.jdbcDriverClass=org.postgresql.Driver
 database.postgresql.jdbcDriverClass=org.postgresql.Driver
 database.jdbcURL=jdbc\:postgresql\://localhost/fedora
