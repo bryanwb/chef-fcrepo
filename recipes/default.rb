@@ -72,15 +72,6 @@ execute "install fedora" do
   action :run
 end
 
-%w{ solr gsearch }.each do |subdir|
-  directory "#{node['fedora']['home']}/#{subdir}" do
-    owner node['fedora']['user']
-    group node['fedora']['user']
-    mode "0755"
-    action :create
-  end
-end 
-
 template "#{node['fedora']['home']}/server/config/fedora-users.xml" do
   source "fedora-users.xml.erb"
   owner node['fedora']['user']
@@ -94,21 +85,6 @@ directory "#{node['fedora']['home']}/tomcat/conf/Catalina/localhost" do
   mode "0755"
   recursive true
 end
-
-template "#{node['fedora']['home']}/tomcat/conf/Catalina/localhost/solr.xml" do
-  source "solr.xml.erb"
-  owner node['fedora']['user']
-  group node['fedora']['user']
-  mode "0755"
-end
-
-maven "solr" do
-  group_id "org.apache.solr"
-  version "3.6.1"
-  dest "#{node['fedora']['home']}/solr"
-  packaging "war"
-  action :put
-end 
 
 service "fedora" do
   action [ :enable, :start ]
