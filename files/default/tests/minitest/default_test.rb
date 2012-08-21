@@ -27,12 +27,12 @@ describe_recipe 'fcrepo::default' do
   end
 
   after do 
-    require './helper.rb'
+    require ::File.expand_path('./support/helper.rb', File.dirname(__FILE__))
     pids_to_remove.each do |pid|
-      Open3.popen3('fedora-purge.sh localhost:080 fedoraAdmin fedoracms7 #{pid} http ""') do |stdin,stdout,stderr|
-        stdout.readlines.each do |line| 
-          if line =~ /objects failed/
-            raise RuntimeError, "setup call failed"
+      Open3.popen3("fedora-purge.sh localhost:8080 fedoraAdmin fedoracms7 #{pid} http ''") do |stdin,stdout,stderr|
+        stderr.readlines.each do |line| 
+          if line =~ /ERROR/
+            raise RuntimeError, "teardown call failed"
           end
         end
       end

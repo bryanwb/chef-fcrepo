@@ -4,7 +4,7 @@ include_recipe "yumrepo::postgresql9"
    package pkg
 end
 
-cookbook_file "/var/lib/pgsql/9.0/data" do
+cookbook_file "/var/lib/pgsql/9.0/data/pg_hba.conf" do
   source "pg_hba.conf"
   owner "postgres"
 end
