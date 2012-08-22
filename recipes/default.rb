@@ -8,8 +8,6 @@
 #
 
 
-include_recipe "fcrepo::postgres"
-
 user node['fedora']['user']
 
 directory node['fedora']['home'] do
