@@ -4,14 +4,23 @@ include_recipe "yumrepo::postgresql9"
    package pkg
 end
 
+ruby_block "create database" do
+  block do
+    require 'fileutils'
+    FileUtils.rm_rf "/var/lib/pgsql/9.0/data"
+    system('/etc/init.d/postgresql-9.0 initdb')
+  end
+  not_if {::File.exists? "/var/lib/pgsql/9.0/data" }
+end
+
+
 cookbook_file "/var/lib/pgsql/9.0/data/pg_hba.conf" do
   source "pg_hba.conf"
   owner "postgres"
 end
 
-ruby_block "create database" do
+ruby_block "start database" do
   block do
-    system('/etc/init.d/postgresql-9.0 initdb')
     system('/etc/init.d/postgresql-9.0 start')
   end
 end
