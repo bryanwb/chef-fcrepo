@@ -70,6 +70,12 @@ execute "install fedora" do
   action :run
 end
 
+cookbook_file "#{node['fedora']['home']}/server/config/fedora.fcfg" do
+  source "fedora.fcfg"
+  owner node['fedora']['user']
+  group node['fedora']['user']
+  mode "0755"
+end
 template "#{node['fedora']['home']}/server/config/fedora-users.xml" do
   source "fedora-users.xml.erb"
   owner node['fedora']['user']
