@@ -62,20 +62,3 @@ ruby_block "create role and database" do
     count.length == 0
   end
 end
-
-# bash "create role" do
-#   code <<-EOH
-#   psql -d postgres -c "CREATE ROLE \"fedoraAdmin\" LOGIN PASSWORD 'fedoraAdmin';"
-#   EOH
-#   user "postgres"
-#   ignore_failure true
-# end
-
-# bash "create database" do
-#   code <<-EOH
-#   psql -d postgres -c "CREATE DATABASE \"fedora\" WITH ENCODING='UTF8' OWNER=\"fedoraAdmin\";"
-#   EOH
-#   user "postgres"
-#   ignore_failure true
-# end
-
