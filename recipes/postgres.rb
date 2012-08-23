@@ -43,7 +43,7 @@ ruby_block "create role and database" do
     require 'pg'
     conn = PG.connect( dbname: 'postgres', user: 'postgres')
     result_role = conn.exec("CREATE ROLE \"fedoraAdmin\" WITH LOGIN PASSWORD 'fedoraadmin'")
-    result_passwd = conn.exec("CREATE DATABASE fedora WITH ENCODING='UTF8' OWNER=\"fedorAdmin\"")
+    result_passwd = conn.exec("CREATE DATABASE fedora WITH ENCODING='UTF8' OWNER=\"fedoraAdmin\"")
   end
   only_if do
     Gem.clear_paths 
@@ -51,10 +51,6 @@ ruby_block "create role and database" do
     conn = PG.connect( dbname: 'postgres', user: 'postgres')
     count = conn.exec("select datname from pg_database where datname='fedora'").values.flatten!
     Chef::Log.debug("count.length is #{count.length}") if count
-    if count
-      count.length == 0
-    else
-      false
-    end
+    count.nil?
   end
 end
