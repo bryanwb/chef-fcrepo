@@ -37,14 +37,6 @@ ruby_block "start database" do
   end
 end
 
-# bash "set silly password for postgres" do
-
-#   code <<-EOF
-#     psql -d postgres -c "alter role postgres with password 'postgres'" 
-#   EOF
-#   user 'postgres'
-# end
-
 ruby_block "create role and database" do
   block do
     Gem.clear_paths
@@ -58,7 +50,11 @@ ruby_block "create role and database" do
     require 'pg'
     conn = PG.connect( dbname: 'postgres', user: 'postgres')
     count = conn.exec("select datname from pg_database where datname='fedora'").values.flatten!
-    Chef::Log.debug("count.length is #{count.length}") 
-    count.length == 0
+    Chef::Log.debug("count.length is #{count.length}") if count
+    if count
+      count.length == 0
+    else
+      false
+    end
   end
 end
