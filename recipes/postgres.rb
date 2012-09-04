@@ -1,56 +1,27 @@
+node.set['postgresql']['client']['packages'] =  [ "postgresql90", "postgresql90-devel"  ]
+node.set['postgresql']['server']['packages'] = [ "postgresql90-devel", "postgresql90-server" ]
+
 include_recipe "yumrepo::postgresql9"
+include_recipe "postgresql::ruby"
+include_recipe "postgresql::server"
 
-%w{ postgresql90-server postgresql90-devel postgresql90 postgresql90-libs }.each do |pkg|
-   package pkg
+pg_conn_info = {
+  :host => node['fedora']['db']['host'],
+  :username => 'postgres',
+  :password => node['postgresql']['password']['postgres']
+}
+
+postgresql_database_user node['fedora']['db']['username'] do
+  username "\"#{node['fedora']['db']['username']}\""
+  connection pg_conn_info
+  password node['fedora']['db']['password']
+  action :create
+  ignore_failure true
 end
 
-chef_gem "pry"
-chef_gem "pry-nav"
-chef_gem "pry-doc"
-
-chef_gem "pg" do
-  action :nothing
-end
-
-ruby_block "create database" do
-  block do
-    require 'fileutils'
-    FileUtils.rm_rf "/var/lib/pgsql/9.0/data"
-    system('/etc/init.d/postgresql-9.0 initdb')
-  end
-  not_if {::File.exists? "/var/lib/pgsql/9.0/data/PG_VERSION" }
-end
-
-link "/usr/bin/pg_config" do
-  to "/usr/pgsql-9.0/bin/pg_config"
-  notifies :install, "chef_gem[pg]", :immediately
-end
-
-cookbook_file "/var/lib/pgsql/9.0/data/pg_hba.conf" do
-  source "pg_hba.conf"
-  owner "postgres"
-end
-
-ruby_block "start database" do
-  block do
-    system('/etc/init.d/postgresql-9.0 start')
-  end
-end
-
-ruby_block "create role and database" do
-  block do
-    Gem.clear_paths
-    require 'pg'
-    conn = PG.connect( dbname: 'postgres', user: 'postgres')
-    result_role = conn.exec("CREATE ROLE \"fedoraAdmin\" WITH LOGIN PASSWORD 'fedoraadmin'")
-    result_passwd = conn.exec("CREATE DATABASE fedora WITH ENCODING='UTF8' OWNER=\"fedoraAdmin\"")
-  end
-  only_if do
-    Gem.clear_paths 
-    require 'pg'
-    conn = PG.connect( dbname: 'postgres', user: 'postgres')
-    count = conn.exec("select datname from pg_database where datname='fedora'").values.flatten!
-    Chef::Log.debug("count.length is #{count.length}") if count
-    count.nil?
-  end
+postgresql_database "fedora" do
+  connection pg_conn_info
+  owner "\"#{node['fedora']['db']['username']}\""
+  encoding 'UTF-8'
+  action :create
 end
