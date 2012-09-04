@@ -525,7 +525,7 @@
             validation tests will not be run.</comment>
     </param>
     <param name="ddlConverter" value="org.fcrepo.server.utilities.MySQLDDLConverter"/>
-    <param name="dbUsername" value="<%= node['fcrepo']['db']['username'] %>">
+    <param name="dbUsername" value="<%= node['fedora']['db']['username'] %>">
       <comment>The database user name.</comment>
     </param>
     <param name="testOnReturn" value="true">
@@ -535,7 +535,7 @@
     <param name="maxActive" value="100">
       <comment>The maximum number of active instances in pool.</comment>
     </param>
-    <param name="dbPassword" value="<%= node['fcrepo']['db']['password'] %>">
+    <param name="dbPassword" value="<%= node['fedora']['db']['password'] %>">
       <comment>The database password.</comment>
     </param>
     <param name="jdbcURL" value="jdbc:postgresql://localhost/fedora">
@@ -598,7 +598,7 @@
             thread.</comment>
     </param>
     <param name="ddlConverter" value="org.fcrepo.server.utilities.DerbyDDLConverter"/>
-    <param name="dbUsername" value="<%= node['fcrepo']['db']['username'] %>">
+    <param name="dbUsername" value="<%= node['fedora']['db']['username'] %>">
       <comment>The database user name.</comment>
     </param>
     <param name="testOnReturn" value="true">
@@ -608,7 +608,7 @@
     <param name="maxActive" value="100">
       <comment>The maximum number of active instances in pool.</comment>
     </param>
-    <param name="dbPassword" value="<%= node['fcrepo']['db']['password'] %>">
+    <param name="dbPassword" value="<%= node['fedora']['db']['password'] %>">
       <comment>The database password.</comment>
     </param>
     <param name="jdbcURL" value="jdbc:derby:/opt/fedora/current/derby/fedora3;create=true">
@@ -679,7 +679,7 @@
             validation tests will not be run.</comment>
     </param>
     <param name="ddlConverter" value="org.fcrepo.server.utilities.OracleDDLConverter"/>
-    <param name="dbUsername" value="<%= node['fcrepo']['db']['username'] %>">
+    <param name="dbUsername" value="<%= node['fedora']['db']['username'] %>">
       <comment>The database user name.</comment>
     </param>
     <param name="connection.SetBigStringTryClob" value="true"/>
@@ -690,7 +690,7 @@
     <param name="maxActive" value="100">
       <comment>The maximum number of active instances in pool.</comment>
     </param>
-    <param name="dbPassword" value="<%= node['fcrepo']['db']['password'] %>">
+    <param name="dbPassword" value="<%= node['fedora']['db']['password'] %>">
       <comment>The database password.</comment>
     </param>
     <param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora3">
@@ -761,7 +761,7 @@
             validation tests will not be run.</comment>
     </param>
     <param name="ddlConverter" value="org.fcrepo.server.utilities.PostgresDDLConverter"/>
-    <param name="dbUsername" value="<%= node['fcrepo']['db']['username'] %>">
+    <param name="dbUsername" value="<%= node['fedora']['db']['username'] %>">
       <comment>The database user name.</comment>
     </param>
     <param name="testOnReturn" value="true">
@@ -771,7 +771,7 @@
     <param name="maxActive" value="100">
       <comment>The maximum number of active instances in pool.</comment>
     </param>
-    <param name="dbPassword" value="<%= node['fcrepo']['db']['password'] %>">
+    <param name="dbPassword" value="<%= node['fedora']['db']['password'] %>">
       <comment>The database password.</comment>
     </param>
     <param name="jdbcURL" value="jdbc:postgresql://localhost/fedora">
@@ -910,9 +910,9 @@
     <param name="bufferFlushBatchSize" value="1000"/>
     <param name="backslashIsEscape" value="true"/>
     <param name="autoFlushDormantSeconds" value="5"/>
-    <param name="password" value="<%= node['fcrepo']['db']['password'] %>"/>
+    <param name="password" value="<%= node['fedora']['db']['password'] %>"/>
     <param name="autoFlushBufferSize" value="1000"/>
-    <param name="username" value="<%= node['fcrepo']['db']['username'] %>"/>
+    <param name="username" value="<%= node['fedora']['db']['username'] %>"/>
     <param name="poolMaxSize" value="10"/>
     <param name="jdbcURL" value="jdbc:postgresql://localhost/riTriples"/>
     <param name="ddlGenerator" value="org.nsdl.mptstore.impl.postgres.PostgresDDLGenerator"/>
