@@ -40,8 +40,8 @@ database.jdbcDriverClass=org.postgresql.Driver
 database.postgresql.jdbcDriverClass=org.postgresql.Driver
 database.jdbcURL=jdbc\:postgresql\://localhost/fedora
 database.postgresql.jdbcURL=jdbc\:postgresql\://localhost/fedora
-database.password=fedoraAdmin
-database.username=fedoraAdmin
+database.password= <%= node['fcrepo']['db']['password'] %>
+database.username=<%= node['fcrepo']['db']['username'] %>
 
 # messaging
 messaging.enabled=true
