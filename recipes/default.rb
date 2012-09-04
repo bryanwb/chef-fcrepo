@@ -7,6 +7,7 @@
 # Apache 2.0 license
 #
 
+include_recipe "maven"
 
 user node['fedora']['user']
 
