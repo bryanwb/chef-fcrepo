@@ -8,7 +8,7 @@ deploy.local.services=false
 fedora.admin.pass=fedoraAdmin
 fedora.home=<%= node['fedora']['home'] %>
 fedora.serverContext=fedora
-fedora.serverHost=<%= node.name %>
+fedora.serverHost=<%= node['fqdn'] %>
 llstore.type=akubra-fs
 
 # servlet container
@@ -38,8 +38,8 @@ database.driver=<%= Chef::Config[:file_cache_path] %>/postgresql-9.0-801.jdbc4.j
 database.postgresql.driver=<%= Chef::Config[:file_cache_path] %>/postgresql-9.0-801.jdbc4.jar
 database.jdbcDriverClass=org.postgresql.Driver
 database.postgresql.jdbcDriverClass=org.postgresql.Driver
-database.jdbcURL=jdbc\:postgresql\://localhost/fedora
-database.postgresql.jdbcURL=jdbc\:postgresql\://localhost/fedora
+database.jdbcURL=jdbc\:postgresql\://<%= node['fedora']['db']['host'] %>/fedora
+database.postgresql.jdbcURL=jdbc\:postgresql\://<%= node['fedora']['db']['host'] %>/fedora
 database.password= <%= node['fedora']['db']['password'] %>
 database.username=<%= node['fedora']['db']['username'] %>
 
