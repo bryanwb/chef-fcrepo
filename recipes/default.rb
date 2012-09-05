@@ -76,6 +76,7 @@ template "#{node['fedora']['home']}/server/config/fedora.fcfg" do
   owner node['fedora']['user']
   group node['fedora']['user']
   mode "0755"
+  notifies :restart, "service[fedora]"
 end
 template "#{node['fedora']['home']}/server/config/fedora-users.xml" do
   source "fedora-users.xml.erb"
