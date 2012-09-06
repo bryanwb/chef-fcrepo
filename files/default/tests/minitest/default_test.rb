@@ -11,7 +11,7 @@ describe_recipe 'fcrepo::default' do
   include MiniTest::Chef::Resources
 
   before do
-    sleep 5
+    sleep 10
     fedora_ingest = "#{node['fedora']['home']}/client/bin/fedora-ingest-demos.sh"
     Open3.popen3("#{fedora_ingest} localhost 8080 fedoraAdmin fedoracms7 http") do |stdin,stdout,stderr|
       stdout.readlines.each do |line| 
