@@ -17,19 +17,27 @@ Vagrant::Config.run do |config|
       dist_config.vm.box_url = options[:url]
       dist_config.vm.customize [ "modifyvm", :id, "--memory", "1024" ]      
       dist_config.vm.provision :chef_solo do |chef|
-        chef.cookbooks_path = ["./-cookbooks"]
+        chef.cookbooks_path = ["cookbooks"]
         chef.provisioning_path = '/etc/vagrant-chef' 
         chef.log_level         = :debug		 
         chef.add_recipe "minitest-handler"
-        chef.add_recipe "ark"
-        chef.add_recipe "java"
-	chef.add_recipe "yumrepo::postgresql9"    
-        chef.add_recipe "maven"
+	chef.add_recipe "postgresql::server"
+        chef.add_recipe "yumrepo::postgresql9"
+        chef.add_recipe "fcrepo::postgres"
 	chef.add_recipe "fcrepo"	
 
         if options[:run_list]
           options[:run_list].each {|recipe| chef.run_list.insert(0, recipe) }
         end
+
+        chef.json = {
+          :java => {
+            :install_flavor => "oracle",
+            :oracle => {
+              :accept_onerous_download_terms => true
+            }
+          }
+        }
       end
     end
   end
