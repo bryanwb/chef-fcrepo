@@ -693,7 +693,7 @@
     <param name="dbPassword" value="<%= node['fedora']['db']['password'] %>">
       <comment>The database password.</comment>
     </param>
-    <param name="jdbcURL" value="jdbc:oracle:thin:@<%= node['fcrepo']['db']['host'] %>:1521:fedora3">
+    <param name="jdbcURL" value="jdbc:oracle:thin:@<%= node['fedora']['db']['host'] %>:1521:fedora3">
       <comment>The JDBC connection URL.</comment>
     </param>
     <param name="whenExhaustedAction" value="1">
@@ -914,7 +914,7 @@
     <param name="autoFlushBufferSize" value="1000"/>
     <param name="username" value="<%= node['fedora']['db']['username'] %>"/>
     <param name="poolMaxSize" value="10"/>
-    <param name="jdbcURL" value="jdbc:postgresql://<%= node['fcrepo']['db']['host'] %>/riTriples"/>
+    <param name="jdbcURL" value="jdbc:postgresql://<%= node['fedora']['db']['host'] %>/riTriples"/>
     <param name="ddlGenerator" value="org.nsdl.mptstore.impl.postgres.PostgresDDLGenerator"/>
     <param name="connectorClassName" value="org.trippi.impl.mpt.MPTConnector"/>
     <param name="jdbcDriver" value="org.postgresql.Driver"/>

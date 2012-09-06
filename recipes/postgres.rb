@@ -3,7 +3,7 @@ node.set['postgresql']['server']['packages'] = [ "postgresql90-devel", "postgres
 
 include_recipe "yumrepo::postgresql9"
 include_recipe "postgresql::ruby"
-include_recipe "postgresql::server"
+include_recipe "database"
 
 pg_conn_info = {
   :host => node['fedora']['db']['host'],
